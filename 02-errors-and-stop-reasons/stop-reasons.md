@@ -8,11 +8,11 @@ Stop reasons are not errors. They are the model telling you what happened and wh
 
 | Stop Reason | Meaning | Action | Common mistake |
 |-------------|---------|--------|----------------|
-| `end_turn` | Model finished normally | Process output, continue loop if incomplete | None — this is the happy path |
+| `end_turn` | Model finished normally | Process output, continue loop if incomplete | None — this is the happy path. 'end_turn' doesn't mean the task is complete, only that the turn completed normally. |
 | `tool_use` | Model requesting a client-side tool | Execute tool, return results, continue | Forgetting to append assistant message before tool results |
 | `pause_turn` | Model yielded for server-side tool | Continue the turn — do NOT restart | Treating as error, restarting loop |
 | `max_tokens` | Response truncated at token limit | Decide: use partial or re-issue | Discarding output, or not noticing mid-JSON truncation |
-| `stop_sequence` | Hit a custom stop sequence | Application-specific | N/A unless you use custom stop sequences |
+| `stop_sequence` | Hit a custom stop sequence | Application-specific | N/A unless you use custom stop sequences. assuming stop sequence content is complete output — check if truncation occurred at the sequence boundary |
 | `refusal` | Model declined the request | Handle gracefully, do not retry same input | Treating as system failure, crashing the loop |
 
 ---
@@ -133,5 +133,9 @@ A global `max_tokens` set for the orchestrator will silently truncate workers on
 **Agent-specific:** Refusals in agent pipelines should route to a fallback handler, not crash the loop. A refusal on one agent should not take down the whole pipeline.
 
 ---
+
+**Streaming Note**  
+
+Stop reasons behave differently with streaming — specifically, stop_reason appears in the message_stop event, not the initial response object. 
 
 *Next: [Recovery Patterns](recovery-patterns.md) | Back: [Error Types](error-types.md)*
