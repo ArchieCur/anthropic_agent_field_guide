@@ -115,7 +115,13 @@ response = client.messages.create(
 )
 ```
 
-Automatic caching advances the cache point as conversations grow. Use manual `cache_control` when you need fine-grained control over exactly what is cached (e.g., caching both system prompt and tool definitions explicitly).
+**Automatic Caching Notes:**  
+
+- Automatic caching advances the cache point as conversations grow. Use manual `cache_control`   
+when you need fine-grained control over exactly what is cached (e.g., caching both system prompt and tool definitions explicitly).
+- Automatic caching is convenient but the cache point behavior is less predictable than manual placement. 
+- If you upgrade from claude-sonnet-4-5 to claude-sonnet-4-6, the cache is invalidated.
+For teams running long-running agent pipelines, a model version bump mid-session is a hidden cache killer.
 
 ---
 
